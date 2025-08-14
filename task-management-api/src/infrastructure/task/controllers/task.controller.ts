@@ -6,11 +6,13 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiQuery } from '@nestjs/swagger';
 import { TaskService } from '../../../domain/task/services/task.service';
 import { CreateTaskDto } from '../../../common/dtos/create-task.dto';
 import { UpdateTaskDto } from '../../../common/dtos/update-task.dto';
+import { GetTasksDto } from '../../../common/dtos/get-tasks.dto';
 
 @ApiTags('Tasks')
 @Controller('tasks')
@@ -31,8 +33,44 @@ export class TaskController {
   @Get()
   @ApiOperation({ summary: 'Get all tasks' })
   @ApiResponse({ status: 200, description: 'Return all tasks.' })
-  findAll() {
-    return this.taskService.findAll();
+  @ApiQuery({
+    name: 'page',
+    required: false,
+    description: 'Page number for pagination',
+    type: Number,
+  })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    description: 'Number of items per page',
+    type: Number,
+  })
+  @ApiQuery({
+    name: 'sortBy',
+    required: false,
+    description: 'Field to sort by',
+    type: String,
+  })
+  @ApiQuery({
+    name: 'sortOrder',
+    required: false,
+    description: 'Sort order (ASC or DESC)',
+    enum: ['ASC', 'DESC'],
+  })
+  @ApiQuery({
+    name: 'status',
+    required: false,
+    description: 'Filter by task status',
+    type: String,
+  })
+  @ApiQuery({
+    name: 'search',
+    required: false,
+    description: 'Search term for task titles and descriptions',
+    type: String,
+  })
+  async findAll(@Query() getTasksDto: GetTasksDto) {
+    return this.taskService.findAll(getTasksDto);
   }
 
   @Get(':id')

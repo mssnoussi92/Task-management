@@ -45,9 +45,54 @@ export class TaskTypeOrmRepository implements TaskRepositoryPort {
     return taskEntity ? this.toDomain(taskEntity) : null;
   }
 
-  async findAll(): Promise<Task[]> {
-    const tasks = await this.taskRepository.find();
-    return tasks.map((task) => this.toDomain(task));
+  async findAll(options: {
+    page?: number;
+    limit?: number;
+    sortBy?: string;
+    sortOrder?: 'ASC' | 'DESC';
+    status?: string;
+    search?: string;
+  }) {
+    const {
+      page = 1,
+      limit = 10,
+      sortBy = 'createdAt',
+      sortOrder = 'DESC',
+      status,
+      search,
+    } = options;
+
+    const query = this.taskRepository.createQueryBuilder('task');
+
+    if (status) {
+      query.andWhere('task.status = :status', { status });
+    }
+
+    if (search) {
+      query.andWhere(
+        '(task.title LIKE :search OR task.description LIKE :search)',
+        { search: `%${search}%` },
+      );
+    }
+
+    const order =
+      sortOrder && ['ASC', 'DESC'].includes(sortOrder.toUpperCase())
+        ? sortOrder.toUpperCase()
+        : 'ASC';
+
+    query
+      .orderBy(`task.${sortBy}`, order as 'ASC' | 'DESC')
+      .skip((page - 1) * limit)
+      .take(limit);
+
+    const [tasks, total] = await query.getManyAndCount();
+
+    return {
+      data: tasks.map((task) => this.toDomain(task)),
+      total,
+      page,
+      limit,
+    };
   }
 
   async deleteById(id: string): Promise<void> {

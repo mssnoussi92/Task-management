@@ -1,46 +1,51 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./App.css";
 import TaskList from "./components/TaskList";
 import TaskForm from "./components/TaskForm";
 import TaskStatusChart from "./components/TaskStatusChart";
-import { getTasks } from "./api";
-import type { Task } from "./types";
+import type { Task, PaginatedTasks, TaskStatus } from "./types";
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
 } from "./components/ui/card";
-
+import { getTasks } from "./api";
 
 const App: React.FC = () => {
-  const [tasks, setTasks] = useState<Task[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
+  const [tasks, setTasks] = useState<PaginatedTasks | null>(null);
+  const [taskUpdated, setTaskUpdated] = useState(false);
+  const [page, setPage] = useState(1);
+  const [limit] = useState(5);
+  const [sortBy, setSortBy] = useState<keyof Task>("dueDate");
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
+  const [status, setStatus] = useState<TaskStatus | "ALL">("ALL");
+  const [search, setSearch] = useState("");
 
   const fetchTasks = async () => {
-    try {
-      const fetchedTasks = await getTasks();
-      setTasks(fetchedTasks);
-    } catch (err) {
-      setError("Failed to fetch tasks");
-    } finally {
-      setLoading(false);
-    }
+    const fetchedTasks = await getTasks({
+      page,
+      limit,
+      sortBy,
+      sortOrder,
+      status: status === "ALL" ? undefined : status,
+      search,
+    });
+    setTasks(fetchedTasks);
   };
 
   useEffect(() => {
     fetchTasks();
-  }, []);
+  }, [taskUpdated, page, sortBy, sortOrder, status, search]);
 
   const handleTaskCreated = () => {
-    fetchTasks();
+    setTaskUpdated(!taskUpdated);
   };
 
   const handleTaskUpdated = () => {
     setSelectedTask(null);
-    fetchTasks();
+    setTaskUpdated(!taskUpdated);
   };
 
   const handleEditTask = (task: Task) => {
@@ -50,14 +55,6 @@ const App: React.FC = () => {
   const handleCancel = () => {
     setSelectedTask(null);
   };
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  if (error) {
-    return <div>{error}</div>;
-  }
 
   return (
     <div className="container mx-auto p-4">
@@ -104,7 +101,18 @@ const App: React.FC = () => {
                 <TaskList
                   tasks={tasks}
                   onEdit={handleEditTask}
-                  onDelete={fetchTasks}
+                  onTaskUpdated={handleTaskUpdated}
+                  page={page}
+                  setPage={setPage}
+                  limit={limit}
+                  sortBy={sortBy}
+                  setSortBy={setSortBy}
+                  sortOrder={sortOrder}
+                  setSortOrder={setSortOrder}
+                  status={status}
+                  setStatus={setStatus}
+                  search={search}
+                  setSearch={setSearch}
                 />
               </CardContent>
             </Card>
