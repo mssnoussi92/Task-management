@@ -1,20 +1,36 @@
 import React from 'react';
 import { Pie } from 'react-chartjs-2';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
-import type { Task, TaskStatus } from '../types';
+import type { Task, PaginatedTasks } from '../types';
 import { TaskStatusValues } from '../types';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 interface TaskStatusChartProps {
-    tasks: Task[];
+    tasks: PaginatedTasks | null;
 }
 
 const TaskStatusChart: React.FC<TaskStatusChartProps> = ({ tasks }) => {
+    if (!tasks) {
+        return (
+            <div className="flex items-center justify-center h-64">
+                <p>Loading tasks...</p>
+            </div>
+        );
+    }
+
+    if (tasks.data.length === 0) {
+        return (
+            <div className="flex items-center justify-center h-64">
+                <p>No tasks to display</p>
+            </div>
+        );
+    }
+
     const statusCounts = {
-        [TaskStatusValues.TODO]: tasks.filter(task => task.status === TaskStatusValues.TODO).length,
-        [TaskStatusValues.IN_PROGRESS]: tasks.filter(task => task.status === TaskStatusValues.IN_PROGRESS).length,
-        [TaskStatusValues.DONE]: tasks.filter(task => task.status === TaskStatusValues.DONE).length,
+        [TaskStatusValues.TODO]: tasks.data.filter((task: Task) => task.status === TaskStatusValues.TODO).length,
+        [TaskStatusValues.IN_PROGRESS]: tasks.data.filter((task: Task) => task.status === TaskStatusValues.IN_PROGRESS).length,
+        [TaskStatusValues.DONE]: tasks.data.filter((task: Task) => task.status === TaskStatusValues.DONE).length,
     };
 
     const chartData = {
