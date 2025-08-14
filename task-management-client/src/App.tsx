@@ -88,17 +88,14 @@ const App: React.FC = () => {
                   selectedTask={selectedTask}
                   onTaskCreated={handleTaskCreated}
                   onTaskUpdated={handleTaskUpdated}
+                  onCancel={handleCancel}
                 />
               </CardContent>
             </Card>
-          </motion.div>
+          </div>
         </div>
         <div className="md:col-span-2">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.4 }}
-          >
+          <div>
             <Card>
               <CardHeader>
                 <CardTitle>Task List</CardTitle>
