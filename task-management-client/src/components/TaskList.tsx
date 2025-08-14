@@ -27,8 +27,8 @@ const TaskList: React.FC<TaskListProps> = ({ tasks, onEdit, onDelete }) => {
 
     const getStatusBadge = (status: string) => {
         switch (status) {
-            case "TO_DO":
-                return <Badge variant="outline">To Do</Badge>;
+            case "TODO":
+                return <Badge className="bg-yellow-500 text-white">To Do</Badge>;
             case "IN_PROGRESS":
                 return <Badge className="bg-blue-500 text-white">In Progress</Badge>;
             case "DONE":

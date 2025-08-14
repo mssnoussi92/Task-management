@@ -13,6 +13,7 @@ import {
   CardTitle,
 } from "./components/ui/card";
 
+
 const App: React.FC = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -45,6 +46,10 @@ const App: React.FC = () => {
 
   const handleEditTask = (task: Task) => {
     setSelectedTask(task);
+  };
+
+  const handleCancel = () => {
+    setSelectedTask(null);
   };
 
   if (loading) {
