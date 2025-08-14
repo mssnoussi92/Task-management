@@ -27,8 +27,15 @@ export class TaskService {
     return this.taskRepository.findById(id);
   }
 
-  async findAll(): Promise<Task[]> {
-    return this.taskRepository.findAll();
+  async findAll(getTasksDto: {
+    page?: number;
+    limit?: number;
+    sortBy?: string;
+    sortOrder?: 'ASC' | 'DESC';
+    status?: TaskStatus;
+    search?: string;
+  }) {
+    return this.taskRepository.findAll(getTasksDto);
   }
 
   async update(id: string, updates: Partial<Task>): Promise<Task> {
