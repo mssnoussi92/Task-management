@@ -13,3 +13,21 @@ export interface Task {
   status: TaskStatus;
   dueDate: string;
 }
+
+export interface GetTasksParams {
+  page?: number;
+  limit?: number;
+  sortBy?: keyof Task;
+  sortOrder?: "asc" | "desc";
+  status?: TaskStatus;
+  search?: string;
+}
+
+export interface PaginatedResponse<T> {
+  data: T[];
+  total: number;
+  page: number;
+  limit: number;
+}
+
+export type PaginatedTasks = PaginatedResponse<Task>;
