@@ -1,10 +1,8 @@
 import React from "react";
-import { motion } from "framer-motion";
 import type { Task } from "../types";
 import { deleteTask } from "../api";
 import {
     Table,
-    TableBody,
     TableCell,
     TableHead,
     TableHeader,
@@ -27,8 +25,8 @@ const TaskList: React.FC<TaskListProps> = ({ tasks, onEdit, onDelete }) => {
 
     const getStatusBadge = (status: string) => {
         switch (status) {
-            case "TO_DO":
-                return <Badge variant="outline">To Do</Badge>;
+            case "TODO":
+                return <Badge className="bg-yellow-500 text-white">To Do</Badge>;
             case "IN_PROGRESS":
                 return <Badge className="bg-blue-500 text-white">In Progress</Badge>;
             case "DONE":
@@ -38,23 +36,6 @@ const TaskList: React.FC<TaskListProps> = ({ tasks, onEdit, onDelete }) => {
         }
     };
 
-    const containerVariants = {
-        hidden: { opacity: 0 },
-        visible: {
-            opacity: 1,
-            transition: {
-                staggerChildren: 0.1,
-            },
-        },
-    };
-
-    const itemVariants = {
-        hidden: { y: 20, opacity: 0 },
-        visible: {
-            y: 0,
-            opacity: 1,
-        },
-    };
 
     return (
         <div className="w-full">
@@ -69,15 +50,10 @@ const TaskList: React.FC<TaskListProps> = ({ tasks, onEdit, onDelete }) => {
                         <TableHead>Actions</TableHead>
                     </TableRow>
                 </TableHeader>
-                <motion.tbody
-                    variants={containerVariants}
-                    initial="hidden"
-                    animate="visible"
-                >
+                <tbody>
                     {tasks.map((task) => (
-                        <motion.tr
+                        <TableRow
                             key={task.id}
-                            variants={itemVariants}
                             className="hover:bg-muted/50"
                         >
                             <TableCell>{task.title}</TableCell>
@@ -99,9 +75,9 @@ const TaskList: React.FC<TaskListProps> = ({ tasks, onEdit, onDelete }) => {
                                     </Button>
                                 </div>
                             </TableCell>
-                        </motion.tr>
+                        </TableRow>
                     ))}
-                </motion.tbody>
+                </tbody>
             </Table>
         </div>
     );

@@ -49,9 +49,9 @@ This project is a simple Task Management System that shows how to implement a he
 
 4.  Run the application:
     `bash
-    pnpm run start:dev
-    `
-    The API will be available at `http://localhost:3000`. You can access the Swagger documentation at `http://localhost:3000/api`.
+pnpm run start:dev
+`
+    The API will be available at `http://localhost:3000`. You can access the Swagger documentation at `http://localhost:3000/api-docs`.
 
 ### Running the Frontend
 
@@ -69,6 +69,6 @@ This project is a simple Task Management System that shows how to implement a he
 
 3.  Run the application:
     `bash
-    pnpm run dev
-    `
+pnpm run dev
+`
     The frontend will be available at `http://localhost:5173`.

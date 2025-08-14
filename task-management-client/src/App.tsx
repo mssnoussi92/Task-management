@@ -1,4 +1,3 @@
-import { motion } from "framer-motion";
 import React, { useEffect, useState } from "react";
 import "./App.css";
 import TaskList from "./components/TaskList";
@@ -12,6 +11,7 @@ import {
   CardHeader,
   CardTitle,
 } from "./components/ui/card";
+
 
 const App: React.FC = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -47,6 +47,10 @@ const App: React.FC = () => {
     setSelectedTask(task);
   };
 
+  const handleCancel = () => {
+    setSelectedTask(null);
+  };
+
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -61,11 +65,7 @@ const App: React.FC = () => {
         Task Management Dashboard
       </h1>
       <div className="mb-8">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-        >
+        <div>
           <Card>
             <CardHeader>
               <CardTitle>Task Status Overview</CardTitle>
@@ -74,15 +74,11 @@ const App: React.FC = () => {
               <TaskStatusChart tasks={tasks} />
             </CardContent>
           </Card>
-        </motion.div>
+        </div>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         <div className="md:col-span-1">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-          >
+          <div>
             <Card>
               <CardHeader>
                 <CardTitle>Add or Edit Task</CardTitle>
@@ -92,17 +88,14 @@ const App: React.FC = () => {
                   selectedTask={selectedTask}
                   onTaskCreated={handleTaskCreated}
                   onTaskUpdated={handleTaskUpdated}
+                  onCancel={handleCancel}
                 />
               </CardContent>
             </Card>
-          </motion.div>
+          </div>
         </div>
         <div className="md:col-span-2">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.4 }}
-          >
+          <div>
             <Card>
               <CardHeader>
                 <CardTitle>Task List</CardTitle>
@@ -115,7 +108,7 @@ const App: React.FC = () => {
                 />
               </CardContent>
             </Card>
-          </motion.div>
+          </div>
         </div>
       </div>
     </div>

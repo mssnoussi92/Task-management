@@ -11,13 +11,6 @@ import {
     FormMessage,
 } from "./ui/form";
 import { Input } from "./ui/input";
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "./ui/select";
 import { createTask, updateTask } from "@/api";
 import type { Task } from "src/types";
 import { TaskStatusValues } from "@/types";
@@ -38,12 +31,14 @@ interface TaskFormProps {
     selectedTask: Task | null;
     onTaskCreated: () => void;
     onTaskUpdated: () => void;
+    onCancel: () => void;
 }
 
 const TaskForm: React.FC<TaskFormProps> = ({
     selectedTask,
     onTaskCreated,
     onTaskUpdated,
+    onCancel,
 }) => {
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -87,6 +82,9 @@ const TaskForm: React.FC<TaskFormProps> = ({
 
     return (
         <Form {...form}>
+            <h3 className="text-lg font-semibold">
+                {selectedTask ? "Edit Task" : "Add Task"}
+            </h3>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
                 <FormField
                     control={form.control}
@@ -133,30 +131,36 @@ const TaskForm: React.FC<TaskFormProps> = ({
                         name="status"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Status</FormLabel>
-                                <Select
-                                    onValueChange={field.onChange}
-                                    defaultValue={field.value}
-                                >
-                                    <FormControl>
-                                        <SelectTrigger>
-                                            <SelectValue placeholder="Select a status" />
-                                        </SelectTrigger>
-                                    </FormControl>
-                                    <SelectContent position="popper">
+                                <FormLabel>Task Status</FormLabel>
+                                <FormControl>
+                                    <select
+                                        {...field}
+                                        className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                    >
                                         {Object.values(TaskStatusValues).map((status) => (
-                                            <SelectItem key={status} value={status}>
+                                            <option key={status} value={status}>
                                                 {status}
-                                            </SelectItem>
+                                            </option>
                                         ))}
-                                    </SelectContent>
-                                </Select>
+                                    </select>
+                                </FormControl>
                                 <FormMessage />
                             </FormItem>
                         )}
                     />
                 )}
-                <Button type="submit">{selectedTask ? "Update" : "Create"}</Button>
+                <div className="flex space-x-2">
+                    <Button type="submit">{selectedTask ? "Update" : "Create"}</Button>
+                    {selectedTask && (
+                        <Button
+                            type="button"
+                            variant="destructive"
+                            onClick={onCancel}
+                        >
+                            Cancel
+                        </Button>
+                    )}
+                </div>
             </form>
         </Form>
     );
