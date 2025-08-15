@@ -1,8 +1,16 @@
-import { Task } from '../../domain/task/entities/task.entity';
+import { ApiProperty } from '@nestjs/swagger';
+import { TaskDto } from './task.dto';
 
-export interface PaginatedResponse {
-  data: Task[];
+export class PaginatedResponse {
+  @ApiProperty({ type: () => [TaskDto] })
+  data: TaskDto[];
+
+  @ApiProperty()
   total: number;
+
+  @ApiProperty()
   page: number;
+
+  @ApiProperty()
   limit: number;
 }

@@ -8,11 +8,19 @@ import {
   Delete,
   Query,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiQuery } from '@nestjs/swagger';
+import {
+  ApiBody,
+  ApiOperation,
+  ApiParam,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { TaskService } from '../../../domain/task/services/task.service';
 import { CreateTaskDto } from '../../../common/dtos/create-task.dto';
 import { UpdateTaskDto } from '../../../common/dtos/update-task.dto';
 import { GetTasksDto } from '../../../common/dtos/get-tasks.dto';
+import { Task } from '../../../domain/task/entities/task.entity';
+import { PaginatedResponse } from '../../../common/dtos/paginated-response.dto';
 
 @ApiTags('Tasks')
 @Controller('tasks')
@@ -21,9 +29,11 @@ export class TaskController {
 
   @Post()
   @ApiOperation({ summary: 'Create a new task' })
+  @ApiBody({ type: CreateTaskDto })
   @ApiResponse({
     status: 201,
     description: 'The task has been successfully created.',
+    type: Task,
   })
   @ApiResponse({ status: 400, description: 'Bad Request.' })
   create(@Body() createTaskDto: CreateTaskDto) {
@@ -32,42 +42,10 @@ export class TaskController {
 
   @Get()
   @ApiOperation({ summary: 'Get all tasks' })
-  @ApiResponse({ status: 200, description: 'Return all tasks.' })
-  @ApiQuery({
-    name: 'page',
-    required: false,
-    description: 'Page number for pagination',
-    type: Number,
-  })
-  @ApiQuery({
-    name: 'limit',
-    required: false,
-    description: 'Number of items per page',
-    type: Number,
-  })
-  @ApiQuery({
-    name: 'sortBy',
-    required: false,
-    description: 'Field to sort by',
-    type: String,
-  })
-  @ApiQuery({
-    name: 'sortOrder',
-    required: false,
-    description: 'Sort order (ASC or DESC)',
-    enum: ['ASC', 'DESC'],
-  })
-  @ApiQuery({
-    name: 'status',
-    required: false,
-    description: 'Filter by task status',
-    type: String,
-  })
-  @ApiQuery({
-    name: 'search',
-    required: false,
-    description: 'Search term for task titles and descriptions',
-    type: String,
+  @ApiResponse({
+    status: 200,
+    description: 'Return all tasks.',
+    type: PaginatedResponse,
   })
   async findAll(@Query() getTasksDto: GetTasksDto) {
     return this.taskService.findAll(getTasksDto);
@@ -75,7 +53,8 @@ export class TaskController {
 
   @Get(':id')
   @ApiOperation({ summary: 'Get a task by id' })
-  @ApiResponse({ status: 200, description: 'Return the task.' })
+  @ApiParam({ name: 'id', description: 'Task ID' })
+  @ApiResponse({ status: 200, description: 'Return the task.', type: Task })
   @ApiResponse({ status: 404, description: 'Task not found.' })
   findOne(@Param('id') id: string) {
     return this.taskService.findOne(id);
@@ -83,9 +62,12 @@ export class TaskController {
 
   @Patch(':id')
   @ApiOperation({ summary: 'Update a task' })
+  @ApiParam({ name: 'id', description: 'Task ID' })
+  @ApiBody({ type: UpdateTaskDto })
   @ApiResponse({
     status: 200,
     description: 'The task has been successfully updated.',
+    type: Task,
   })
   @ApiResponse({ status: 404, description: 'Task not found.' })
   update(@Param('id') id: string, @Body() updateTaskDto: UpdateTaskDto) {
@@ -94,6 +76,7 @@ export class TaskController {
 
   @Delete(':id')
   @ApiOperation({ summary: 'Delete a task' })
+  @ApiParam({ name: 'id', description: 'Task ID' })
   @ApiResponse({
     status: 200,
     description: 'The task has been successfully deleted.',
